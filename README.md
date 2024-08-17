@@ -190,6 +190,14 @@ Learning Objectives
 11. Logs - write to stdout \*\*
 12. Admin - one off on production
 
+### Environment
+
+```python
+from os import environ
+environ.setdefault("MY_VAR1", "Hello from PAJ")
+print(f"Message: {environ["MY_VAR1"]}")
+```
+
 ### Django Configurations
 
 ```bash
