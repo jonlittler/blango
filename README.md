@@ -174,3 +174,36 @@ Learning Objectives
 - Define the different methods of production hosting
 - Explain the pros and cons of each production hosting method
 - Describe the different factors that you should consider when selecting a hosting solution
+
+### 12 Factors
+
+1. Codebase - a single source repository
+2. Dependencies - requirements.txt
+3. Config - environment variables \*\*
+4. Backing Services - database abstraction
+5. Build, Release & Run
+6. Processes - stateless, data stored in db
+7. Port Binding - expose interface on a specific tcp port
+8. Concurrency - horizontal scaling
+9. Disposability - restart quickly with no data loss
+10. Dev/Prod Parity - consistent tools and versions
+11. Logs - write to stdout \*\*
+12. Admin - one off on production
+
+### Django Configurations
+
+```bash
+pip3 install django-configurations dj-database-url
+
+# set timezone env
+DJANGO_TIME_ZONE="Europe/London" python3 manage.py runserver 0.0.0.0:8000
+BLANGO_TIME_ZONE="Europe/London" python3 manage.py runserver 0.0.0.0:8000
+
+# database url
+mysql://username:password@mysql-host.example.com:3306/db_name?option1=value1&option2=value2
+
+# /// empty hostname
+sqlite:///{BASE_DIR}/db.sqlite3
+```
+
+There are a couple of things to be aware of when using `DatabaseURLValue`. It differs from the other Value classes in that it doesn’t read the value from the environment variable `DJANGO_DATABASES`, as you would expect from the convention seen so far. Instead, it reads from the environment variable `DATABASE_URL`.
