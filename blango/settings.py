@@ -56,7 +56,7 @@ class Dev(Configuration):
         'crispy_bootstrap5',
     ]
 
-    #Crispy crispy_forms
+    # Crispy crispy_forms
     CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
     CRISPY_TEMPLATE_PACK = "bootstrap5"
 

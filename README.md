@@ -215,3 +215,29 @@ sqlite:///{BASE_DIR}/db.sqlite3
 ```
 
 There are a couple of things to be aware of when using `DatabaseURLValue`. It differs from the other Value classes in that it doesn’t read the value from the environment variable `DJANGO_DATABASES`, as you would expect from the convention seen so far. Instead, it reads from the environment variable `DATABASE_URL`.
+
+### Logging
+
+- Loggers - name and level
+- Handlers - where to log the message
+- Filters - drop messages
+- Formatters - add meta data e.g., date and time
+
+Default security level is `WARNING`, so the logging module will not log messages with `DEBUG` and `INFO`.
+
+https://docs.python.org/3.9/library/logging.handlers.html
+
+### Security
+
+pbkdf2_sha256$260000$ud2D0L3h8b98JDjGaffUnQ$LAYlrboOAUGZdRhEh7xT/oom2Nv/dpJpmDOpnmPze0k= \
+
+`algorithm`\$`iterations`\$`salt`\$`hash` \
+algorithm = pbkdf2_sha256 \
+iterations = 260000 \
+salt = ud2D0L3h8b98JDjGaffUnQ \
+hash = LAYlrboOAUGZdRhEh7xT/oom2Nv/dpJpmDOpnmPze0k= \
+
+```bash
+pip install --upgrade setuptools
+pip install "django[argon2]"
+```
