@@ -241,3 +241,163 @@ hash = LAYlrboOAUGZdRhEh7xT/oom2Nv/dpJpmDOpnmPze0k= \
 pip install --upgrade setuptools
 pip install "django[argon2]"
 ```
+
+## Module 3
+
+Welcome to Week 3 of the Advanced Django: Building a Blog course. These assignments cover increasing performance by caching and optimizing the database. The module ends with graded coding exercises.
+
+Learning Objectives
+
+- Explain how caching speeds up performance
+- Identify different ways to cache data in Django
+- Add view caching to different views
+- Adjust the time for which views are cached
+- Vary caching based on cookies
+- Cache only specific parts of a template
+- Perform lower level caching actions
+- Use Django Debug Toolbar to monitor performance
+- Implement database indexes to speed up finding records
+- Use select_related to fetch all of the data in one query
+- Use bulk operations (create, update, delete) to reduce the number of queries
+
+### Cache
+
+https://docs.djangoproject.com/en/3.2/topics/cache/
+
+#### Memcached
+
+```bash
+sudo apt install memcached
+```
+
+```python
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.memcached.PyMemcacheCache",
+        "LOCATION"": "127.0.0.1:11211",
+    }
+}
+```
+
+#### Database
+
+```bash
+python manage.py createcachetable
+```
+
+```python
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+        "LOCATION": "my_cache_table",
+    }
+}
+```
+
+#### Filesystem
+
+```python
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+        "LOCATION": "/var/tmp/django_cache",
+    }
+}
+```
+
+#### Local Memory
+
+```python
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "unique-snowflake",
+    }
+}
+```
+
+#### Dummy
+
+```python
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.dummy.DummyCache",
+    }
+}
+```
+
+#### Shell
+
+```bash
+python3 manage.py shell
+```
+
+```python
+from django.core.cache import caches
+default_cache = caches["default"]
+
+# or
+
+from django.core.cache import cache
+# cache is the equivalent of caches["default"]/our default_cache variable
+
+from django.core.cache import cache
+from blog.models import Post
+
+post_pk = 1
+p = Post.objects.get(pk=post_pk)
+cache.set(f"post_{post_pk}", p, 30) # 30 secs
+
+p1 = cache.get(f"post_{post_pk}")
+p == p1
+
+# wait 30 secs
+print(cache.get(f"post_{post_pk}"))
+
+# or delete key
+cache.delete(f"post_{post_pk}")
+
+# default using sentinel
+sentinel = object()
+cache.set("current_user", None, 30)
+u = cache.get("current_user", sentinel)
+u is None       # True
+u is sentinel   # False
+
+# wait 30 secs
+u = cache.get("current_user", sentinel)
+u is sentinel   # True
+```
+
+```bash
+python3 manage.py shell
+```
+
+```python
+from django.core.cache import cache
+from blog.models import Post
+
+# cache many
+all_posts = Post.objects.all()
+posts_to_cache = {f"post_{post.pk}": post for post in all_posts}
+posts_to_cache
+cache.set_many(posts_to_cache, 30)
+
+# get / get many
+cache.get("post_2")
+cache.get_many(["post_1", "post_2", "post_1000"])
+
+# None Null
+cache.set("none_value", None, 30)
+# {'none_value': None}
+
+cache.get_many(["none_value"])
+# after 30 secs {}
+
+# delete many
+# get or set many
+cache.set("key1", "value1")
+cache.get_or_set("key1", "value2")      # 'value1'
+cache.get_or_set("key2", "value3")      # 'value3'
+cache.get_or_set("key2", "value4")      # 'value3'
+```
