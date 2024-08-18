@@ -401,3 +401,46 @@ cache.get_or_set("key1", "value2")      # 'value1'
 cache.get_or_set("key2", "value3")      # 'value3'
 cache.get_or_set("key2", "value4")      # 'value3'
 ```
+
+### Explain Queryset
+
+```bash
+python3 manage.py shell
+```
+
+```python
+from blog.models import Post
+Post.objects.first().comments.explain()
+# 0 0 0 SEARCH TABLE blog_comment USING INDEX blog_comment_content_type_id_e26f0063 (content_type_id=?)
+
+# after index on object_id & created_at
+# 0 0 0 SEARCH TABLE blog_comment USING INDEX blog_comment_object_id_134c93ed (object_id=?)
+```
+
+### Bulk DB Operations
+
+https://docs.djangoproject.com/en/3.2/topics/db/optimization/
+
+```bash
+python3 manage.py shell
+```
+
+```python
+from blog.models import Post, Comment
+
+# bulk create
+comments = []
+for post in Post.objects.all():
+    comments.append(
+    Comment(creator=post.author, content="Thank you for reading my post!", content_object=post))
+Comment.objects.bulk_create(comments)
+
+# bulk update
+comments = Comment.objects.filter(content="Thank you for reading my post!")
+for comment in comments:
+    comment.content = comment.content + " Signed, " + comment.creator.username
+Comment.objects.bulk_update(comments, ["content"])
+
+# bulk delete
+Comment.objects.filter(content__contains="Thank you for reading my post!").delete()
+```
