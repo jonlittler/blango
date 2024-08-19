@@ -57,6 +57,7 @@ class Dev(Configuration):
         'crispy_forms',
         'crispy_bootstrap5',
         'debug_toolbar',
+        'blango_auth',
     ]
 
     # Crispy crispy_forms
@@ -125,6 +126,7 @@ class Dev(Configuration):
         },
     ]
 
+    # change password hash to Argon2
     PASSWORD_HASHERS = [
       'django.contrib.auth.hashers.Argon2PasswordHasher',       # default
       'django.contrib.auth.hashers.PBKDF2PasswordHasher',
@@ -132,6 +134,8 @@ class Dev(Configuration):
       'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
     ]
 
+    # Custom user model
+    AUTH_USER_MODEL = "blango_auth.User"
 
     # Internationalization
     # https://docs.djangoproject.com/en/3.2/topics/i18n/
