@@ -444,3 +444,80 @@ Comment.objects.bulk_update(comments, ["content"])
 # bulk delete
 Comment.objects.filter(content__contains="Thank you for reading my post!").delete()
 ```
+
+## Module 3
+
+Welcome to Week 4 of the Advanced Django: Building a Blog course. These assignments cover creating a custom user model, Django registration, and Django Allauth. The module ends with graded coding exercises.
+
+Learning Objectives
+
+- Explain why it is better to use a custom User model from the beginning
+- Create a custom User model
+- Identify when to use a custom model or a separate model
+- Change authentication from username to email
+- Differentiate between one-step and two-step activation
+- Add login page and a profile users see once logged in
+- Create two-step activation for your blog
+- Send users an activation email
+- Set a window for which users must activate their account
+- Remove users who have not activated their accounts
+- Describe the Django Allauth library
+- Create a Google project through their developer portal
+- Allow users to sign in with their Google credentials with Allauth
+- Set up Google app credentials as a SocialApp
+
+### Custom User Model
+
+https://docs.djangoproject.com/en/5.0/topics/auth/customizing/
+
+Set up your own User model when you start your project, it’s fairly simple.
+
+1. Create a user model that inherits from `django.contrib.auth.model.AbstractUser` (it doesn’t need to be called User). This can be in any app in your project, but you should consider creating an app just for authentication-related models, templates, forms and views.
+2. Add the `AUTH_USER_MODEL` setting to point to the new Model. If you’ve added the model inside a new app, make sure to add that to `INSTALLED_APPS`.
+3. Register the Model in the `admin.py` for the app in which it was created.
+
+#### Dump Data of existing user model
+
+```bash
+# backup data
+python3 manage.py dumpdata -o data.json blog.Comment blog.Tag blog.Post auth.User
+
+# create user app
+python3 manage.py startapp blango_auth
+
+# load data
+python3 manage.py loaddata data.json
+```
+
+Adding a model means the content type IDs have changed, so we’ll need to update all the Comment objects to point to the new content type of Post.
+
+```python
+from django.contrib.contenttypes.models import ContentType
+from blog.models import Comment, Post
+post_type = ContentType.objects.get_for_model(Post)
+Comment.objects.update(content_type=post_type)
+```
+
+### Email Authentication
+
+To implement email login we need to do the following:
+
+- Create a new `UserManager` subclass, and override the `create_user()` and `create_superuser()` methods. We need to have the methods require an email address instead of a username.
+- Update the `User` model to make the email field unique and remove the `username` field.
+- Set the `User` model’s objects attribute to an instance of the new user manager.
+- Set the `User` model’s `USERNAME_FIELD` to "email".
+- Set the `User` model’s `REQUIRED_FIELDS` to an empty list. This might seem strange, because by default this value is `["email"]`, however Django assumes the `USERNAME_FIELD` is required, and so doesn’t allow it to be listed in `REQUIRED_FIELDS`.
+- Change the `__str__()` method of User to return the email address.
+  Subclass django.contrib.auth.admin.UserAdmin and remove any reference to username or replace with email.
+
+> What does \_("email address") mean?
+
+The first positional argument for an EmailField is the label. The method `_()` is typically `gettext_lazy` or `gettext` but aliased to `_`.
+
+This is done via (specific example in the docs 2):
+
+```python
+from django.utils.translation import gettext_lazy as _
+```
+
+The function gettext_lazy is used to support internationalization of text.

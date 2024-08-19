@@ -1,13 +1,18 @@
 {
   "cSpell.words": [
+    "Allauth",
     "blango",
     "CODIO",
     "contenttypes",
     "createcachetable",
+    "dumpdata",
+    "endcache",
     "endcol",
     "endrow",
     "filebased",
+    "gettext",
     "levelname",
+    "loaddata",
     "locmem",
     "OAUG",
     "Opnm",
@@ -15,6 +20,7 @@
     "runserver",
     "setdefault",
     "setuptools",
+    "startapp",
     "templatetags",
     "Ylrbo"
   ]
