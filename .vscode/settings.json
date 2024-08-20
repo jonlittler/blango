@@ -22,6 +22,7 @@
     "setuptools",
     "startapp",
     "templatetags",
+    "timedelta",
     "Ylrbo"
   ]
 }
