@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load blog_extras crispy_forms_tags %}
+
+{% block title %}Register for Blango{% endblock %}
+
+{% block content %}
+{% row "justify-content-center" %}
+    {% col "col-md-6" %}
+        <h2>Register for Blango</h2>
+        {% crispy form %}
+    {% endcol %}
+{% endrow %}
+{% endblock content %}

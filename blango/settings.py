@@ -41,7 +41,9 @@ class Dev(Configuration):
     CSRF_COOKIE_SAMESITE = 'None'
     SESSION_COOKIE_SAMESITE = 'None'
 
-    INTERNAL_IPS = ['127.0.0.1', '192.168.11.179']
+    # if DJDT (dev tools) not enabled
+    # visit .../ip/ url and update 192... below
+    INTERNAL_IPS = ['127.0.0.1', '192.168.10.93']
 
 
     # Application definition
@@ -136,6 +138,11 @@ class Dev(Configuration):
 
     # Custom user model
     AUTH_USER_MODEL = "blango_auth.User"
+
+    # Email backend - console
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+    ACCOUNT_ACTIVATION_DAYS = 7
+    # REGISTRATION_OPEN = False
 
     # Internationalization
     # https://docs.djangoproject.com/en/3.2/topics/i18n/
