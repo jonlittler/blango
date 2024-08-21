@@ -546,3 +546,27 @@ User.objects.filter(
     date_joined__lt=timezone.now() - timedelta(days=settings.ACCOUNT_ACTIVATION_DAYS)
 ).delete()
 ```
+
+## All Auth
+
+How does third-party authentication work?
+
+When you click a link to log in with a third-party, say, Google, you’re taken to a page hosted by Google, which will ask you to confirm that you want the authenticating web site (Blango) to get access to your Google account.
+
+Once you confirm, Google redirects your browser back to a page hosted on Blango, and includes a token identifying you.
+
+Blango then makes a request in the background to Google, and provides this token, to fetch your user ID and other metadata that you allow from Google.
+
+Django Allauth will store the token so that later you can re-authenticate the user.
+
+Once your Google profile information is retrieved by Blango, it has to be saved somewhere. Django Allauth will create a Django User that’s available to be used in `ForeignKeys` and so on.
+
+https://console.developers.google.com/
+
+```bash
+pip3 install django-allauth
+```
+
+AllAuth setup not working with Google... removing configuration.
+
+<mark>**Too much messing with Google configurations**</mark>
