@@ -445,7 +445,7 @@ Comment.objects.bulk_update(comments, ["content"])
 Comment.objects.filter(content__contains="Thank you for reading my post!").delete()
 ```
 
-## Module 3
+## Module 4
 
 Welcome to Week 4 of the Advanced Django: Building a Blog course. These assignments cover creating a custom user model, Django registration, and Django Allauth. The module ends with graded coding exercises.
 
