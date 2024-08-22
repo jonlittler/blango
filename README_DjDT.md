@@ -18,7 +18,7 @@ Django Debug Toolbar is a third party library that adds a toolbar to the side of
 - Profile
 
 ```bash
-pip install django-debug-toolbar
+pip3 install django-debug-toolbar
 ```
 
 Update settings.py
