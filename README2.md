@@ -44,3 +44,92 @@ Learning Objectives
 - Contrast a class-based view with a function-based view
 - Explain how generic views reduce the amount of code
 - Create generic views for the PostList and PostDetail classes
+
+### Serializers
+
+https://www.django-rest-framework.org/api-guide/fields/
+
+```bash
+pip3 install djangorestframework
+python3 manage.py shell
+```
+
+```python
+from django.utils import timezone
+from rest_framework import serializers
+
+class User:
+    def __init__(self, username, email=None, first_name=None, last_name=None, password=None, join_date=None):
+        self.username = username
+        self.email = email
+        self.first_name = first_name
+        self.last_name = last_name
+        self.password = password
+        self.join_date = join_date or timezone.now()
+
+def is_capitalized(value):
+    if value[0].lower() == value[0]:
+        raise serializers.ValidationError("value must be capitalized")
+
+class UserSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    email = serializers.EmailField(required=False)
+    first_name = serializers.CharField(max_length=20, required=False, validators=[is_capitalized])
+    last_name = serializers.CharField(max_length=20, required=False, validators=[is_capitalized])
+    password = serializers.CharField(write_only=True, required=False)
+    join_date = serializers.DateTimeField(read_only=True)
+
+    def create(self, validated_data):
+        return User(**validated_data)
+
+    def update(self, instance, validated_data):
+        for key, value in validated_data.items():
+            setattr(instance, key, value)
+        return instance
+
+    def validate_email(self, value):
+        value = value.lower()
+        domain = value.split("@")[1]
+        if domain != "jonlittler.com":
+            raise serializers.ValidationError("domain must be jonlittler.com")
+        return value
+
+    def validate(self, data):
+        if (not data.get("first_name")) != (not data.get("last_name")):
+            raise serializers.ValidationError("first_name and last_name must be provided together")
+        return data
+
+# valid
+u2 = {"username": "apple", "join_date": "2024-08-23T11:11:11.123412Z"}
+s2 = UserSerializer(data=u2)
+s2.initial_data
+s2.is_valid()
+s2.data
+s2.validated_data
+
+# error
+u3 = {"username": "pjlonglastname", "first_name": "Pj", "last_name": "This Is 26 Characters Long", "some_other_key": "extra"}
+s3 = UserSerializer(data=u3)
+s3.initial_data
+s3.is_valid()
+s3.data
+s3.validated_data
+s3.errors
+s3.is_valid(raise_exception=True)
+
+# save
+user_data = {"username": "paj", "first_name": "Pj", "last_name": "Apple"}
+serializer = UserSerializer(User, data=user_data)
+serializer.is_valid()
+u1 = serializer.save()
+u1.first_name
+
+# validation
+u4 = UserSerializer(data={"username": "paj2", "email": "paj@notjonlittler.com"})
+u4.is_valid()
+u4.errors
+
+u5 = UserSerializer(data={"username": "paj2", "first_name": "paj", "email": "paj@jonlittler.com"})
+u5.is_valid()
+u5.errors
+```
