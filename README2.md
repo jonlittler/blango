@@ -133,3 +133,134 @@ u5 = UserSerializer(data={"username": "paj2", "first_name": "paj", "email": "paj
 u5.is_valid()
 u5.errors
 ```
+
+## Module 3
+
+Welcome to Week 3 of the Advanced Django: Introduction to Django Rest Framework course. These assignments cover authentication, permissions, related fields, and nested relationships. The module ends with graded coding exercises.
+
+Learning Objectives
+
+- Explain the importance of authentication
+- Define session authentication
+- Add session authentication to Blango
+- Contrast basic authentication from session authentication
+- Authenticate with Postman, your username, and your password
+- Identify the benefits of token authentication
+- Add token authentication to Blango
+- Define the purpose of permissions
+- Identify some common permissions
+- Update Blango so only authenticated users can make changes
+- Use custom permissions to restrict access to objects
+- Combine permissions so that only the author or admin users can make changes
+- Identify the benefits from having related fields
+- Define PrimaryKeyRelatedField, StringRelatedField, SlugRelatedField, and HyperlinkRelatedField
+- Add a SlugRelatedField for tags to the PostSerializer class
+- Add a HyperlinkRelatedField for the author to the - PostSerializer class
+- Define a read-only nested relationship
+- Define a read-write nested relationship
+- Implement an update method to avoid a race condition
+- Use the get_or_create method to automatically create related objects
+- Modify Blango to create and see comments through the API
+- Modify Blango to create tags through the API
+
+When dealing with user access to the API, there are actually two pieces: authentication, which is who you are; and permissions, which is what you are allowed to do.
+
+### Authentication
+
+https://chariotgizmo-dealinvite-8000.codio.io/api/v1/posts
+https://chariotgizmo-dealinvite-8000.codio.io/admin
+https://chariotgizmo-dealinvite-8000.codio.io/accounts/login
+
+#### Session
+
+The standard way of authenticating in Django, is to log in with a username and password using a form. This user information is then stored in the session, on the backend. The session is identified by a cookie sent by the browser.
+
+Using session authentication is not ideal for use with an API. With a REST API it’s useful for the client to be able to tell who the current user is, by looking at the request.
+
+#### Basic Authentication
+
+Basic authentication is more useful than session authentication when it comes to REST APIs. Basic authentication involves sending the username and password with each request.
+
+`Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=`
+
+dXNlcm5hbWU6cGFzc3dvcmQ= being the string username:password encoded by base-64.
+
+```bash
+python3 blango/manage.py shell
+```
+
+```python
+import requests
+from requests.auth import HTTPBasicAuth
+
+# basic
+requests.get("https://chariotgizmo-dealinvite-8000.codio.io/api/v1/posts/", auth=HTTPBasicAuth("user@example.com", "badpassword"))
+
+# token
+requests.get("http://127.0.0.1:8000/api/v1/posts/", headers={"Authorization": "Token 81082614a73f331b122ba93dbdb5951b44cf21d4"})
+```
+
+#### Token Authentication
+
+Token authentication works by passing a token (a long, random string) in the Authorization header.
+
+`Authorization: Token fccdf7307189644e9fee624224d3471d870a7b829f5c23d0297f15e34c41b974`
+
+`Authorization: Bearer fccdf7307189644e9fee624224d3471d870a7b829f5c23d0297f15e34c41b974`
+
+To use token authentication in DRF we need to add token authorization as an installed app and the authentication classes in the `settings.py` file.
+
+```python
+INSTALLED_APPS = [
+    rest_framework.authtoken
+]
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.BasicAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
+    ]
+}
+```
+
+To apply django rest framework token authentication, you must run a migrate after updating `settings.py`.
+
+```bash
+python3 manage.py migrate
+```
+
+BasicAuthentication & SessionAuthentication are provided by default,however, need to be included when adding TokenAuthentication.
+
+**Four** options to create a token:
+
+1. Through Code
+
+```python
+from blango_auth.models import User
+from rest_framework.authtoken.models import Token
+
+u = User.objects.get(pk=1)
+u.email # 'ben@example.com'
+
+t = Token.objects.create(user=u)
+t.key   # '81082614a73f331b122ba93dbdb5951b44cf21d4'
+```
+
+2. Through Django Admin
+
+https://chariotgizmo-dealinvite-8000.codio.io/admin/authtoken/tokenproxy/add/
+
+3. Through manage.py
+
+```bash
+$ python3 manage.py drf_create_token pj@jonlittler.com
+```
+
+4. Through DRF (api/urls.py)
+
+POST JSON @ https://chariotgizmo-dealinvite-8000.codio.io/api/v1/token-auth/
+
+```python
+from rest_framework.authtoken import views
+```
