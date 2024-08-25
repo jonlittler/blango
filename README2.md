@@ -268,3 +268,44 @@ from rest_framework.authtoken import views
 ### Permissions
 
 Django Rest Framework provides a few helpful classes to add common types of permissions restrictions to views. They’re all importable from `rest_framework.permissions`.
+
+### Related Fields
+
+#### Primary Key
+
+_PrimaryKeyRelatedField_ is actually what we’ve been using so far, the DRF ModelSerializer class sets it up automatically for us behind the scenes. When PostSerializer serializes an author or tags, it renders the related model’s primary key field.
+
+```python
+# this id by default
+author = serializers.PrimaryKeyRelatedField(read_only=True, many=False)
+tags = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
+```
+
+#### String Key
+
+_StringRelatedField_ is a serializer field that calls the `__str__()` method of the related object that’s being serialized.
+
+```python
+tags = serializers.StringRelatedField(many=True)
+```
+
+#### Slug Key
+
+_SlugRelatedField_ is intended to work with a SlugField of a related object, although it can work with any unique field.
+
+```python
+tags = serializers.SlugRelatedField(slug_field="value", many=True, queryset=Tag.objects.all())
+```
+
+#### Hyperlink
+
+_HyperlinkRelatedField_ field serializes a related object to a URL at which we can retrieve the full detail of the object. It requires the name of a view to be provided, and this is used to generate the URL by passing in the primary key of the related object.
+
+```python
+# will need a
+# - UserSerializer
+# - UserDetail view
+# - users/<int:pk> or users/<str:email> url
+
+author = serializers.HyperlinkedRelatedField(queryset=User.objects.all(), view_name="api_user_detail")
+```
