@@ -264,3 +264,7 @@ POST JSON @ https://chariotgizmo-dealinvite-8000.codio.io/api/v1/token-auth/
 ```python
 from rest_framework.authtoken import views
 ```
+
+### Permissions
+
+Django Rest Framework provides a few helpful classes to add common types of permissions restrictions to views. They’re all importable from `rest_framework.permissions`.
