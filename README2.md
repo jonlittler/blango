@@ -309,3 +309,7 @@ _HyperlinkRelatedField_ field serializes a related object to a URL at which we c
 
 author = serializers.HyperlinkedRelatedField(queryset=User.objects.all(), view_name="api_user_detail")
 ```
+
+### Nested Relationships
+
+Instead of giving API clients a reference to a related entity with an ID or a URL, we can nest the related entity directly into the current one. This is easy to do with a read-only relationship, and takes a little bit more work for a read-write relationship.
