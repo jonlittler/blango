@@ -363,3 +363,37 @@ SWAGGER_SETTINGS = {
     }
 }
 ```
+
+### Viewsets
+
+Django Rest Framework has one more trick up its sleeve in regards to reducing the amount of code to write: viewsets. This allows you to define a single class which will handle both the list and detail API for a given model.
+
+Manually setup urls... but there's an easier way, see Routers.
+
+```python
+tag_list = TagViewSet.as_view({
+    "get": "list",
+    "post": "create"
+})
+
+tag_detail = TagViewSet.as_view({
+    "get": "retrieve",
+    "put": "update",
+    "patch": "partial_update",
+    "delete": "destroy"
+})
+
+path("tags/", tag_list, name="tag_list"),
+path("tags/<int:pk>/", tag_detail, name="tag_detail"),
+```
+
+#### Routers
+
+```python
+router = DefaultRouter()
+router.register("tags", TagViewSet)
+
+urlpatterns += [
+    path("", include(router.urls)),
+]
+```
