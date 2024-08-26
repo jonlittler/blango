@@ -10,6 +10,13 @@ from blog.api.permissions import AuthorModifyOrReadOnly, IsAdminUserForObject
 from blog.models import Post, Tag
 from blango_auth.models import User
 
+# Caching imports
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_headers, vary_on_cookie
+
+from rest_framework.exceptions import PermissionDenied
+
 
 # class PostList(generics.ListCreateAPIView):
 #   queryset = Post.objects.all()
@@ -28,6 +35,11 @@ class UserDetail(generics.RetrieveAPIView):
   queryset = User.objects.all()
   serializer_class = UserSerializer
 
+  # Override User get (this is a view), so that can cache for 5 minutes
+  @method_decorator(cache_page(300))
+  def get(self, *args, **kwargs):
+    return super(UserDetail, self).get(*args, *kwargs)
+
 
 class TagViewSet(viewsets.ModelViewSet):
   queryset = Tag.objects.all()
@@ -39,6 +51,16 @@ class TagViewSet(viewsets.ModelViewSet):
     post_serializer = PostSerializer(tag.posts, many=True, context={"request": request})
     return Response(post_serializer.data)
 
+    # Override Tag list (this is a viewset), so that can cache for 5 minutes
+    @method_decorator(cache_page(300))
+    def list(self, *args, **kwargs):
+      return super(TagViewSet, self).list(*args, **kwargs)
+
+    # Override Tag retrieve (this is a viewset), so that can cache for 5 minutes
+    @method_decorator(cache_page(300))
+    def retrieve(self, *args, **kwargs):
+      return super(TagViewSet, self).retrieve(*args, **kwargs)
+
 
 class PostViewSet(viewsets.ModelViewSet):
   permission_classes = [AuthorModifyOrReadOnly | IsAdminUserForObject]
@@ -48,3 +70,21 @@ class PostViewSet(viewsets.ModelViewSet):
     if self.action in ("list", "create"):
       return PostSerializer
     return PostDetailSerializer
+
+  # Override Post list, so that can cache for 2 minutes
+  @method_decorator(cache_page(120))
+  def list(self, *args, **kwargs):
+    print("here")
+    return super(PostViewSet, self).list(*args, **kwargs)
+
+  # Caching method decorators
+  @method_decorator(cache_page(300))
+  @method_decorator(vary_on_headers("Authorization"))
+  @method_decorator(vary_on_cookie)
+  @action(methods=["get"], detail=False, name="Posts by the logged in user")
+  def mine(self, request):
+    if request.user.is_anonymous:
+      raise PermissionDenied("You must bee logged in to see which Posts are yours")
+    posts = self.get_queryset().filter(author=request.user)
+    serializer = PostSerializer(posts, many=True, context={"request": request})
+    return Response(serializer.data)
