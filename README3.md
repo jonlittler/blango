@@ -208,3 +208,9 @@ class PostViewSet(viewsets.ModelViewSet):
 To prevent resource usage from ballooning out of control, we can implement throttling on our API. That is, limiting the amount of requests that clients can make.
 
 Often, throttling is determined by two different rates, a burst rate and a sustained rate. The burst rate applies over a short period, and the sustained rate over a longer period.
+
+### Filtering
+
+To change the queryset that’s used by the view, we can implement the get_queryset() method. In its default implementation, get_queryset() just returns the queryset attribute.
+
+Filtering on query parameters, access query parameters in `get_queryset()` using the `self.request.query_params` dictionary.
