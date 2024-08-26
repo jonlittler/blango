@@ -62,6 +62,7 @@ class Dev(Configuration):
         'blango_auth',
         'rest_framework',
         'rest_framework.authtoken',
+        'drf_yasg',
     ]
 
     # Crispy crispy_forms
@@ -78,6 +79,14 @@ class Dev(Configuration):
         "DEFAULT_PERMISSION_CLASSES": [
             "rest_framework.permissions.IsAuthenticatedOrReadOnly"
         ],
+    }
+
+    # Swagger 
+    SWAGGER_SETTINGS = {
+        "SECURITY_DEFINITIONS": {
+            "Token": {"type": "apiKey", "name": "Authorization", "in": "header"},
+            "Basic": {"type": "basic"},
+        }
     }
 
     MIDDLEWARE = [
