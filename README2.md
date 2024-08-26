@@ -313,3 +313,15 @@ author = serializers.HyperlinkedRelatedField(queryset=User.objects.all(), view_n
 ### Nested Relationships
 
 Instead of giving API clients a reference to a related entity with an ID or a URL, we can nest the related entity directly into the current one. This is easy to do with a read-only relationship, and takes a little bit more work for a read-write relationship.
+
+### Testing
+
+What does `create_fixtures` do? The `create_fixtures` management command creates a user with username `testuser` and password `password` that you can test with.
+
+```bash
+python3 manage.py migrate
+python3 manage.py create_fixtures
+python3 manage.py test bakery.tests_1
+```
+
+`has_permission` is called on all HTTP requests whereas, `has_object_permission` is called from DRF's method def get_object(self). Hence, `has_object_permission` method is available for GET, PUT, DELETE, not for POST request.
