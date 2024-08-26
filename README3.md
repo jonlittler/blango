@@ -1,6 +1,20 @@
 # Advanced Django Rest Framework
 
-## Testing
+## Module 1
+
+### Testing
+
+Welcome to Week 1 of the Advanced Django: Advanced Django Rest Framework course. These assignments cover testing the Django rest framework with both mocks and requests. The module ends with graded coding exercises.
+
+Learning Objectives
+
+- Define unit tests
+- Create tests with APIClient
+- Define the importance of the setup method in tests
+- Write tests for GET, PUT, and POST requests
+- Write a test to evaluate authentication
+- Identify some of the benefits of writing tests with RequestClient
+- Write basic authentication and token authentication tests with RequestClient
 
 ```bash
 git clone git@github.com:jonlittler/blango.git
@@ -20,6 +34,15 @@ If you can’t find an assertion you need, you can always fall back to writing a
 python3 manage.py test  # run all tests
 python3 manage.py test blog.test_post_api
 python3 manage.py test blog.test_tag_api
+
+# for Coursera only
+# run my test solution
+python3 manage.py test_assessment
+python3 manage.py test_assessment 2
+
+# test to test my solution
+python3 manage.py test
+python3 manage.py test assessment.tests_1
 ```
 
 #### Example GET
@@ -81,7 +104,7 @@ Most of the time, if you're going to be testing or using an API you won't be doi
 ```python
 class PostApiTestCase(TestCase):
     def test_post_creation(self):
-        self.client.login(email="test@example.com", password="test@example.com")
+        self.client.login(email="test@example.com", password="password")
         self.client.post("/api/v1/posts/", {"content": ...})
 ```
 
@@ -115,3 +138,24 @@ class PostApiTestCase(TestCase):
         token = Token.objects.create(user=self.u1)
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
 ```
+
+## Module 2
+
+Welcome to Week 2 of the Advanced Django: Advanced Django Rest Framework course. These assignments cover optimizing the Django rest framework with caching, throttling, and filtering. The module ends with graded coding exercises.
+
+Learning Objectives
+
+- Apply the cache_page, vary_on_headers, and vary_on_cookie decorators to API views
+- Wrap API view caching decorators with @method_decorator
+- Add caching to generic views and viewsets
+- Vary on both headers and cookies to account for the various ways to authenticate with the API
+- Define throttling
+- Differentiate between burst and sustained rates
+- Identify the periods used for throttling
+- Add different throttling for anonymous and authenticated users
+- Create different burst and sustained rates for anonymous and authenticated users
+- Explain how DRF defines anonymous users
+- Scope throttling to different views and viewsets
+- Explain what happens to querysets when filtering
+- Define user-based filter, url-based filtering, and query parameter filtering
+- Add user-based filtering and url-based filtering to Blango

@@ -45,7 +45,7 @@ class PostApiTestCase(TestCase):
     # Override test client
     self.client = APIClient()
 
-    # Inserts a Token object into the databas
+    # Inserts a Token object into the database
     token = Token.objects.create(user=self.u1)
 
     # Sets the credentials() of the APIClient client

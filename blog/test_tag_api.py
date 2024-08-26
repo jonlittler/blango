@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 from blog.models import Tag
 
 
-# Use live server (insstead of TestCase)
+# Use live server (instead of TestCase)
 class TagApiTestCase(LiveServerTestCase):
   def setUp(self):
     get_user_model().objects.create_user(
