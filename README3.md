@@ -14,8 +14,12 @@ For example, `assertEqual()`, `assertNotEqual()`, `assertTrue()`, `assertFalse()
 
 If you can’t find an assertion you need, you can always fall back to writing a test and wrapping it in `assertTrue()`.
 
+#### Run Tests
+
 ```python
+python3 manage.py test  # run all tests
 python3 manage.py test blog.test_post_api
+python3 manage.py test blog.test_tag_api
 ```
 
 #### Example GET
@@ -71,6 +75,8 @@ https://docs.djangoproject.com/en/3.2/topics/testing/advanced/#django.test.clien
 ### Authentication
 
 #### Session
+
+Most of the time, if you're going to be testing or using an API you won't be doing so with session based authentication. Using the session for authentication is normally only used for GUIs in browsers.
 
 ```python
 class PostApiTestCase(TestCase):
