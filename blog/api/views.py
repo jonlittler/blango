@@ -17,6 +17,12 @@ from django.views.decorators.vary import vary_on_headers, vary_on_cookie
 
 from rest_framework.exceptions import PermissionDenied
 
+# Queryset filtering
+from django.db.models import Q
+from django.utils import timezone
+from django.http import Http404
+from datetime import timedelta
+
 
 # class PostList(generics.ListCreateAPIView):
 #   queryset = Post.objects.all()
@@ -64,7 +70,47 @@ class TagViewSet(viewsets.ModelViewSet):
 
 class PostViewSet(viewsets.ModelViewSet):
   permission_classes = [AuthorModifyOrReadOnly | IsAdminUserForObject]
+
+  # we'll still refer to this in `get_queryset()`
   queryset = Post.objects.all()
+
+  def get_queryset(self):
+
+    # published only
+    if self.request.user.is_anonymous:
+      queryset = self.queryset.filter(published_at__lte=timezone.now())
+
+    # allow all
+    elif self.request.user.is_staff:
+      queryset = self.queryset
+
+    # filter for own or published
+    else:
+      queryset = self.queryset.filter(Q(published_at__lte=timezone.now()) | Q(author=self.request.user))
+
+    # check for additional time period filtering
+    time_period_name = self.kwargs.get("period_name")
+    print("period:", time_period_name)
+
+    # no further filtering
+    if not time_period_name:
+      return queryset
+
+    # new (last hour)
+    elif time_period_name == "new":
+      return queryset.filter(published_at__gte=timezone.now() - timedelta(hours=1))
+
+    # today
+    elif time_period_name == "today":
+      return queryset.filter(published_at__date=timezone.now().date())
+
+    # week (last 7 days)
+    elif time_period_name == "week":
+      return queryset.filter(published_at__gte=timezone.now() - timedelta(days=7))
+
+    # error
+    else:
+      raise Http404(f"Time period {time_period_name} is not valid, should be 'new', 'today' or 'week'")
 
   def get_serializer_class(self):
     if self.action in ("list", "create"):
@@ -74,12 +120,12 @@ class PostViewSet(viewsets.ModelViewSet):
   # Override Post list, so that can cache for 2 minutes
   @method_decorator(cache_page(120))
   def list(self, *args, **kwargs):
-    print("here")
+    print("cached")
     return super(PostViewSet, self).list(*args, **kwargs)
 
   # Caching method decorators
   @method_decorator(cache_page(300))
-  @method_decorator(vary_on_headers("Authorization"))
+  @method_decorator(vary_on_headers("Authorization", "Cookie"))
   @method_decorator(vary_on_cookie)
   @action(methods=["get"], detail=False, name="Posts by the logged in user")
   def mine(self, request):
