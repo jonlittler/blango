@@ -145,7 +145,7 @@ Welcome to Week 2 of the Advanced Django: Advanced Django Rest Framework course.
 
 Learning Objectives
 
-- Apply the cache_page, vary_on_headers, and vary_on_cookie decorators to API views
+- Apply the cach_page, vary_on_headers, and vary_on_cookie decorators to API views
 - Wrap API view caching decorators with @method_decorator
 - Add caching to generic views and viewsets
 - Vary on both headers and cookies to account for the various ways to authenticate with the API
@@ -159,3 +159,46 @@ Learning Objectives
 - Explain what happens to querysets when filtering
 - Define user-based filter, url-based filtering, and query parameter filtering
 - Add user-based filtering and url-based filtering to Blango
+
+#### Caching Class Method
+
+```python
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+
+
+class CommentListView(APIView):
+    @method_decorator(cache_page(60))
+    def get(self, request):
+        comments = Comment.objects.all()
+        serializer = CommentSerializer(
+            comments, many=True, context={"request": request}
+        )
+        return Response(serializer.data)
+```
+
+We’ve seen how to cache non-generic APIViews, and how to cache action methods on viewsets. But how can we cache the generic APIViews or viewsets when we don’t implement the methods being called?
+
+You will have to implement whichever method you want to cache, and have it just behave as a “pass-through” to the super class’s method.
+
+```python
+class UserDetail(generics.RetrieveAPIView):
+    # existing methods omitted
+
+    @method_decorator(cache_page(300))
+    def get(self, *args, **kwargs):
+        return super(UserDetail, self).get(*args, *kwargs)
+```
+
+Adding caching to viewsets is similar, except the decorator(s) need to be added to the built-in action methods. Remember from the last course, these methods are: `list()` and `retrieve()`.
+
+You probably don't want to cache updates `create()`, `update()`, `partial_update()` and `destroy()` as they wouldn't do anything.
+
+```python
+class PostViewSet(viewsets.ModelViewSet):
+    # existing methods omitted
+
+    @method_decorator(cache_page(120))
+    def list(self, *args, **kwargs):
+        return super(PostViewSet, self).list(*args, **kwargs)
+```
