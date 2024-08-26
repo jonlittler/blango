@@ -202,3 +202,9 @@ class PostViewSet(viewsets.ModelViewSet):
     def list(self, *args, **kwargs):
         return super(PostViewSet, self).list(*args, **kwargs)
 ```
+
+### Throttling
+
+To prevent resource usage from ballooning out of control, we can implement throttling on our API. That is, limiting the amount of requests that clients can make.
+
+Often, throttling is determined by two different rates, a burst rate and a sustained rate. The burst rate applies over a short period, and the sustained rate over a longer period.
