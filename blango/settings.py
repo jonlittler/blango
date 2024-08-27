@@ -63,6 +63,7 @@ class Dev(Configuration):
         'rest_framework',
         'rest_framework.authtoken',
         'drf_yasg',
+        'django_filters',
     ]
 
     # Crispy crispy_forms
@@ -71,14 +72,17 @@ class Dev(Configuration):
 
     # Rest Framework
     REST_FRAMEWORK = {
+      # authentication
       "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.BasicAuthentication",
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.TokenAuthentication",
       ],
+      # permissions
       "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticatedOrReadOnly"
       ],
+      #throttling
       "DEFAULT_THROTTLE_CLASSES": [
         "blog.api.throttling.AnonSustainedThrottle",
         "blog.api.throttling.AnonBurstThrottle",
@@ -91,6 +95,14 @@ class Dev(Configuration):
         "user_sustained": "5000/day",
         "user_burst": "100/minute",
       },
+      # pagination
+      "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+      "PAGE_SIZE": 10,
+      #thp filters, ordering
+      "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend",
+        "rest_framework.filters.OrderingFilter",
+      ],
     }
 
     # Swagger 
