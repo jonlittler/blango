@@ -268,3 +268,23 @@ REST_FRAMEWORK = {
     ],
 }
 ```
+
+### Simple JTW
+
+```bash
+git clone git@github.com:jonlittler/blango.git
+```
+
+JWT stands for JSON Web Token. It is a way of encoding authorization information into JSON structure.
+
+JWTs consist of three parts: header, payload and signature. The header consists of a type (usually JWT) and the algorithm (alg) that was used to generate the signature.
+
+The three parts of the JWT, they’re joined together with a . between each component.
+
+https://django-rest-framework-simplejwt.readthedocs.io/en/latest/settings.html
+
+```python
+pip3 install djangorestframework-simplejwt PyJWT==1.7.1
+```
+
+https://jwt.io/
