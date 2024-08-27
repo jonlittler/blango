@@ -239,3 +239,32 @@ Learning Objectives
 - Add a hero image
 - Create a thumbnail image of a specified size
 - Add images to a serializer
+
+### Pagination
+
+PageNumberPagination\
+Using this class treats the list results as a page, the client can move through the results by specifying a page. `/api/v1/posts/?page=2`
+
+LimitOffsetPagination\
+This pagination class works like paginating a SQL query. You would get the first 100 results like this: `/api/v1/posts/?offset=0&limit=100`. Then, fetch the next 100 like this: `/api/v1/posts/?offset=100&limit=100`, and so on.
+
+CursorPagination\
+This class uses a special cursor query parameter to page through the results. The parameter is opaque, in that the client doesn’t control it. Instead, on each request, DRF generates URLs containing the cursor variable.
+
+CursorPagination should be considered when working with very large datasets. Paging through data can become slow with using offsets, whereas cursor based paging does not. The disadvantage though, is that a client can’t jump to an arbitrary page or offset.
+
+### THP Django Filter
+
+```bash
+pip3 install django-filter
+```
+
+```python
+INSTALLED_APPS = ['django_filters']
+
+REST_FRAMEWORK = {
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend"
+    ],
+}
+```
