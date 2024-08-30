@@ -260,7 +260,7 @@ pip3 install django-filter
 ```
 
 ```python
-INSTALLED_APPS = ['django_filters']
+INSTALLED_APPS = [ 'django_filters' ]
 
 REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": [
@@ -288,3 +288,16 @@ pip3 install djangorestframework-simplejwt PyJWT==1.7.1
 ```
 
 https://jwt.io/
+
+### Versatile Image Field
+
+`django-versatileimagefield` is a library that provides a drop-in replacement for `ImageField`: `VersatileImageField` (versatileimagefield.fields.VersatileImageField). It provides helper methods to generate thumbnails, crop images, and apply filters.
+
+Along with `VersatileImageField` is `PPOIField` (versatileimagefield.fields.PPOIField), or Primary Point of Interest. This is a field that stores the coordinates of the “point of interest” of the image.
+
+````bash
+pip3 install django-versatileimagefield
+
+```python
+INSTALLED_APPS = [ 'versatileimagefield' ]
+````
