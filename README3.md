@@ -368,4 +368,65 @@ const addNumber = (a, b) => {
 };
 ```
 
-### JS Functions
+### JS Classes
+
+```js
+class Car extends Vehicle {
+  constructor(make, model) {
+    this.make = make;
+    this.model = model;
+  }
+}
+```
+
+### JS Promises
+
+The purpose of promises is to provide a method of performing asynchronous code, or running code in the background. Since JavaScript doesn’t have a threading model, this is accomplished with callbacks.
+
+Promises work because functions can be passed around in JavaScript. We need at least two, and sometimes three functions to implement a Promise.
+
+The first is the function that actually does the work. Rather than return a result, the worker function will call a function with the result, to “resolve” the promise.
+
+If there’s a failure in the worker function, then it might also be able to “reject” the promise.
+
+```js
+// Producer Side of Promise
+
+const lazyAdd = function (a, b) {
+  const doAdd = (resolve, reject) => {
+    if (typeof a !== "number" || typeof b !== "number") {
+      reject("a and b must both be numbers")
+    } else {
+      const sum = a + b
+      resolve(sum)
+    }
+  }
+
+  return new Promise(doAdd)
+```
+
+The function that other code will call is `lazyAdd`, but we define another function inside it called `doAdd` which contains the actual code to do the addition.
+
+We need to do this because the function we pass to the Promise class must only take resolve and reject functions as parameters. We could not pass a function to Promise that takes the numbers to add and the resolve and reject functions.
+
+By wrapping `doAdd()`, it has access to the parent function’s variables, and so it can access the `a` and `b` parameters.
+
+```js
+// Executor Side of Promise
+
+function resolvedCallback(data) {
+  console.log("Resolved with data: " + data);
+}
+
+function rejectedCallback(message) {
+  console.log("Rejected with message: " + message);
+}
+
+// p is a Promise instance that has not yet been settled
+// There will be no console output at this point.
+const p = lazyAdd(3, 4);
+
+// This next line will settle the doAdd function
+// There will be some console output now
+p.then(resolvedCallback, rejectedCallback);
+```
