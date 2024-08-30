@@ -43,6 +43,9 @@ urlpatterns = [
 
   # rest api
   path("api/v1/", include("blog.api.urls")),
+
+  # JavaScript
+  path("post-table/", blog.views.post_table, name="blog-post-table"),
 ]
 
 if settings.DEBUG:
