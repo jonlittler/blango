@@ -29,6 +29,9 @@ from blango_auth.forms import BlangoRegistrationForm
 # from django.conf import settings
 # print(f"Time zone: {settings.TIME_ZONE}")
 
+# static
+from django.conf.urls.static import static
+
 urlpatterns = [
   path('admin/', admin.site.urls),
   path('', blog.views.index),
@@ -48,7 +51,8 @@ urlpatterns = [
   path("post-table/", blog.views.post_table, name="blog-post-table"),
 ]
 
+# static
 if settings.DEBUG:
   urlpatterns += [
     path("__debug__/", include(debug_toolbar.urls)),
-  ]
+  ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
