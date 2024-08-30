@@ -432,3 +432,59 @@ p.then(resolvedCallback, rejectedCallback);
 ```
 
 ### React JS
+
+```js
+// Create Element
+
+class ClickButton extends React.Component {
+  state = { wasClicked: false };
+  handleClick() {
+    this.setState({ wasClicked: true });
+  }
+
+  render() {
+    let buttonText;
+
+    if (this.state.wasClicked) buttonText = "Clicked!";
+    else buttonText = "Click Me";
+
+    return React.createElement(
+      "button",
+      {
+        className: "btn btn-primary mt-2",
+        onClick: () => {
+          this.handleClick();
+        },
+      },
+      buttonText
+    );
+  }
+}
+
+// Mount to DOM
+
+const domContainer = document.getElementById("react_root");
+ReactDOM.render(React.createElement(ClickButton), domContainer);
+```
+
+### JSX
+
+#### Babel
+
+Babel is a tool that, among other things, compiles JSX to JavaScript. It can also compile JavaScript that uses new features into JavaScript that’s compatible with older browsers, so it’s a useful tool to know about.
+
+Since we just have a single JavaScript file to compile, we’re going to use a simple method. It’s not as fast as pre-compiling everything, but for our use case we probably won’t notice a difference.
+
+There are two steps to get Babel set up in this way.
+
+First, we need to include the Babel script, before we include any of our own JavaScript that needs to be compiled:
+
+```js
+<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+```
+
+Then we need to add the attribute type="text/babel" to any `<script>s` that we want to be compiled. For example:
+
+```js
+<script type="text/babel" src="{% static "blog/blog.js" %}"></script>
+```
