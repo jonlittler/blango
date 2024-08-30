@@ -1,5 +1,28 @@
 // JS React
-alert('Hello, from Pj & Apple!')
+// alert('Hello, from Pj & Apple!')
+
+// testing fetches
+// /api/v1/posts/, which will output valid data to the console.
+// /,              which will return a 200 status code since it exists, but will fail JSON decode.
+// /abadurl/,      which will return a 404 and trigger our exception.
+
+['/api/v1/posts/', '/', '/abadurl/'].forEach(url => {
+    console.log("url", url)
+    fetch(url).then(response => {
+        if (response.status !== 200) {
+            console.log("err-200")
+            throw new Error('Invalid status from server: ' + response.statusText)
+        }
+        console.log("ok")
+        return response.json()
+    }).then(data => {
+        console.log("resolve")
+        console.log(data)
+      }).catch(e => {
+        console.log("reject")
+        console.error(e)
+    })
+})
 
 // Post Row - TR +TD
 class PostRow extends React.Component {
@@ -30,6 +53,11 @@ class PostRow extends React.Component {
 // Post Table - State, Create Rows and TR +TH
 class PostTable extends React.Component {
     state = {
+        dataLoaded: false,
+        data: null
+    }
+
+    stateOld = {
         dataLoaded: true,
         data: {
             results: [
@@ -48,6 +76,21 @@ class PostTable extends React.Component {
                 }
             ]
         }
+    }
+
+    componentDidMount () {
+        // fetch('/api/v1/posts/').then(response => {
+        fetch(this.props.url).then(response => {
+            if (response.status !== 200) {
+                throw new Error('Invalid status from server: ' + response.statusText)
+            }
+            return response.json()
+        }).then(data => {
+            this.setState({dataLoaded: true, data: data })
+        }).catch(e => {
+        console.error(e)
+        this.setState({dataLoaded: true, data: {results: []}})
+        })
     }
 
     render() {
@@ -86,6 +129,6 @@ class PostTable extends React.Component {
 
 const domContainer = document.getElementById('react_root')
 ReactDOM.render(
-    React.createElement(PostTable),
+    React.createElement(PostTable, {url: postListUrl}),
     domContainer
 )

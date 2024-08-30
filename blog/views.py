@@ -5,6 +5,7 @@ from django.utils import timezone
 
 from blog.models import Post
 from blog.forms import CommentForm
+from django.urls import reverse
 
 import logging
 
@@ -53,5 +54,8 @@ def get_ip(request):
   return HttpResponse(request.META['REMOTE_ADDR'])
 
 # JavaScript
+# def post_table(request):
+#   return render(request, "blog/post-table.html")
+
 def post_table(request):
-  return render(request, "blog/post-table.html")
+  return render(request, "blog/post-table.html", {"post_list_url": reverse("post-list")})
