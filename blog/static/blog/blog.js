@@ -39,8 +39,8 @@ class PostTable extends React.Component {
             'django', 'react'
           ],
           'hero_image': {
-            'thumbnail': '/media/__sized__/hero_images/snake-419043_1920-thumbnail-100x100-70.jpg',
-            'full_size': '/media/hero_images/snake-419043_1920.jpg'
+            'thumbnail': '/media/__sized__/hero_images/IMG_1589-4x6-thumbnail-100x100.png',
+            'full_size': '/media/hero_images/IMG_1589-4x6.png'
           },
           title: 'Test Post',
           slug: 'test-post',
