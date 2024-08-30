@@ -358,3 +358,14 @@ git clone git@github.com:jonlittler/blango.git
 ```
 
 ### JS Functions
+
+```js
+const addNumber = function (a, b) {
+  return a + b;
+};
+const addNumber = (a, b) => {
+  return a + b;
+};
+```
+
+### JS Functions
