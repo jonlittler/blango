@@ -430,3 +430,5 @@ const p = lazyAdd(3, 4);
 // There will be some console output now
 p.then(resolvedCallback, rejectedCallback);
 ```
+
+### React JS
