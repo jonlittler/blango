@@ -488,3 +488,11 @@ Then we need to add the attribute type="text/babel" to any `<script>s` that we w
 ```js
 <script type="text/babel" src="{% static "blog/blog.js" %}"></script>
 ```
+
+### Coding Exercise
+
+```bash
+npm install
+npm test
+npm test js_tests/question_5.test.js
+```
